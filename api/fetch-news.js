@@ -1,4 +1,4 @@
-const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?api_key=imhim1n33ckhnsd1nwogi9jtpqyxjmnlsfztiiml&rss_url=';　
+const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?api_key=imhim1n33ckhnsd1nwogi9jtpqyxjmnlsfztiiml&rss_url=';
 
 const FEEDS = [
   { name: 'Reuters',       url: 'https://feeds.reuters.com/reuters/topNews',          emoji: '📰' },
@@ -63,7 +63,7 @@ category: environment, science, society, innovation, health, other
 Only include articles with positivityScore >= 55.`;
 
     const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
