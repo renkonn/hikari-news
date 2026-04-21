@@ -1,4 +1,4 @@
-const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?api_key=imhim1n33ckhnsd1nwogi9jtpqyxjmnlsfztiiml&rss_url=';
+const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?api_key=imhim1n33ckhnsd1nwogi9jtpqyxjmnlsfztiiml&rss_url=';　
 
 const FEEDS = [
   { name: 'Reuters',       url: 'https://feeds.reuters.com/reuters/topNews',          emoji: '📰' },
