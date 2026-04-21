@@ -31,13 +31,12 @@ async function fetchRSS(feed) {
 }
 
 export default async function handler(req, res) {
-  // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
-    // 1. RSS全フィード取得
+    // 1. RSS取得
     const results = await Promise.allSettled(FEEDS.map(fetchRSS));
     let raw = [];
     results.forEach(r => { if (r.status === 'fulfilled') raw = raw.concat(r.value); });
@@ -46,7 +45,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'No RSS articles fetched' });
     }
 
-    // 2. 上位30件をClaudeでスコアリング
+    // 2. Gemini APIでスコアリング
     const sample = raw.slice(0, 30);
     const list = sample.map((a, i) => `${i + 1}. [${a.source}] ${a.title} — ${a.desc.slice(0, 80)}`).join('\n');
 
@@ -63,24 +62,23 @@ Return ONLY valid JSON (no markdown, no preamble):
 category: environment, science, society, innovation, health, other
 Only include articles with positivityScore >= 55.`;
 
-    const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
-        messages: [{ role: 'user', content: prompt }],
-      }),
-    });
+    const geminiRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.3, maxOutputTokens: 2000 },
+        }),
+      }
+    );
 
-    const claudeData = await claudeRes.json();
-    if (claudeData.error) throw new Error(claudeData.error.message);
+    const geminiData = await geminiRes.json();
+    if (geminiData.error) throw new Error(geminiData.error.message);
 
-    const txt = claudeData.content.map(b => b.text || '').join('').replace(/```json|```/g, '').trim();
+    const txt = geminiData.candidates[0].content.parts[0].text
+      .replace(/```json|```/g, '').trim();
     const { scored = [] } = JSON.parse(txt);
 
     // 3. マージ＆ソート
