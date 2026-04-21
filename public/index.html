@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ひかりニュース — Hikari News</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400&family=Noto+Sans+JP:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&family=Source+Serif+4:ital,wght@0,300;1,300&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#1c1810;--ink3:#6b5f4e;--ink4:#9a8f7e;
+  --paper:#fdf8f0;--paper2:#f7f0e4;--paper3:#efe5d0;
+  --forest:#1a3a2a;--forest2:#2e5c3a;
+  --leaf:#7dbf8a;--leaf2:#a8d4b0;
+  --gold:#c4962a;--gold2:#e8d5a3;--border:#d9cdb8;
+}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;}
+.mast{background:var(--forest);}
+.mast-top{display:flex;align-items:center;justify-content:space-between;padding:.55rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.08);}
+.dateline{color:var(--gold2);font-size:10px;letter-spacing:.12em;opacity:.7;}
+.ltog{display:flex;gap:2px;background:rgba(255,255,255,.1);border-radius:3px;padding:2px;}
+.lbtn{background:none;border:none;color:rgba(255,255,255,.5);font-size:10px;padding:3px 9px;cursor:pointer;border-radius:2px;font-family:'Noto Sans JP',sans-serif;letter-spacing:.05em;transition:all .2s;}
+.lbtn.on{background:var(--gold);color:var(--forest);font-weight:500;}
+.mast-center{text-align:center;padding:1.2rem 1.5rem 1rem;border-bottom:.5px solid rgba(255,255,255,.08);}
+.logo-ja{font-family:'Noto Serif JP',serif;color:var(--gold2);font-size:30px;font-weight:300;letter-spacing:.22em;display:block;margin-bottom:3px;}
+.logo-en{font-family:'Playfair Display',serif;font-style:italic;color:var(--leaf2);font-size:13px;letter-spacing:.2em;opacity:.8;}
+.tagline{color:rgba(255,255,255,.3);font-size:10px;letter-spacing:.09em;margin-top:7px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.tagline::before,.tagline::after{content:'';flex:1;max-width:60px;height:.5px;background:rgba(255,255,255,.13);}
+.mast-nav{display:flex;justify-content:center;padding:.4rem 1.5rem;flex-wrap:wrap;}
+.ni{color:rgba(255,255,255,.5);font-size:11px;padding:.38rem 1rem;border-right:.5px solid rgba(255,255,255,.1);letter-spacing:.06em;cursor:pointer;transition:color .2s;white-space:nowrap;}
+.ni:last-child{border-right:none;} .ni:hover{color:var(--gold2);} .ni.on{color:var(--gold);}
+.ticker{background:var(--forest2);padding:5px 0;display:flex;align-items:center;overflow:hidden;}
+.tlabel{color:var(--gold);font-size:9px;font-weight:500;letter-spacing:.15em;padding:0 1rem;border-right:.5px solid rgba(255,255,255,.15);white-space:nowrap;flex-shrink:0;}
+.tscroll{overflow:hidden;flex:1;}
+.tinner{white-space:nowrap;color:var(--leaf2);font-size:11px;animation:tick 65s linear infinite;display:inline-block;padding-left:100%;}
+@keyframes tick{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.ctrl{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.5rem;border-bottom:.5px solid var(--border);background:var(--paper2);flex-wrap:wrap;gap:8px;}
+.chips{display:flex;gap:5px;flex-wrap:wrap;}
+.chip{background:var(--paper);border:.5px solid var(--border);color:var(--ink3);font-size:11px;padding:4px 10px;border-radius:3px;cursor:pointer;transition:all .15s;font-family:'Noto Sans JP',sans-serif;}
+.chip:hover{border-color:var(--leaf);color:var(--forest);} .chip.on{background:var(--forest);color:var(--gold2);border-color:var(--forest);}
+.fbtn{background:var(--forest);color:var(--gold2);border:none;padding:8px 18px;border-radius:3px;font-size:12px;font-family:'Noto Sans JP',sans-serif;cursor:pointer;letter-spacing:.06em;transition:background .15s;}
+.fbtn:hover{background:var(--forest2);} .fbtn:disabled{opacity:.5;cursor:not-allowed;}
+.feed{padding:1.5rem;}
+.fhead{display:flex;align-items:baseline;gap:.75rem;margin-bottom:1.2rem;padding-bottom:.6rem;border-bottom:1px solid var(--border);position:relative;}
+.fhead::before{content:'';position:absolute;bottom:-1px;left:0;width:38px;height:2px;background:var(--gold);}
+.ftitle{font-family:'Noto Serif JP',serif;font-size:15px;font-weight:400;color:var(--ink);letter-spacing:.05em;}
+.fcount{font-size:11px;color:var(--ink4);}
+.aibadge{margin-left:auto;background:rgba(125,191,138,.12);color:var(--forest2);font-size:10px;padding:2px 8px;border-radius:2px;border:.5px solid var(--leaf2);}
+.hgrid{display:grid;grid-template-columns:3fr 2fr;gap:1.25rem;margin-bottom:1.6rem;}
+@media(max-width:680px){.hgrid{grid-template-columns:1fr;}}
+.hcard{background:#fff;border:.5px solid var(--border);border-radius:4px;overflow:hidden;}
+.hvis{height:150px;background:var(--paper2);display:flex;align-items:center;justify-content:center;font-size:58px;border-bottom:.5px solid var(--border);position:relative;}
+.hsrc{position:absolute;top:9px;left:9px;background:rgba(26,58,42,.82);color:var(--gold2);font-size:9px;padding:2px 7px;border-radius:2px;letter-spacing:.07em;}
+.hpill{position:absolute;top:9px;right:9px;background:rgba(26,58,42,.85);color:var(--leaf2);font-size:10px;padding:2px 9px;border-radius:2px;}
+.hbody{padding:1rem 1.25rem 1.2rem;}
+.cmeta{display:flex;align-items:center;gap:5px;margin-bottom:7px;flex-wrap:wrap;}
+.sc{font-size:9px;color:var(--ink3);background:var(--paper2);padding:2px 6px;border-radius:2px;border:.5px solid var(--border);letter-spacing:.05em;}
+.scs{font-size:9px;background:rgba(125,191,138,.12);color:var(--forest2);padding:2px 6px;border-radius:2px;border:.5px solid var(--leaf2);}
+.tc{font-size:10px;color:var(--ink4);margin-left:auto;}
+.htja{font-family:'Noto Serif JP',serif;font-size:16px;font-weight:400;line-height:1.65;color:var(--ink);margin-bottom:5px;}
+.hten{font-family:'Source Serif 4',serif;font-style:italic;font-size:12px;color:var(--ink3);line-height:1.5;margin-bottom:8px;opacity:.8;}
+.hsum{font-size:12px;color:var(--ink3);line-height:1.75;}
+.pbar-w{display:flex;align-items:center;gap:7px;margin-top:10px;}
+.pbar-l{font-size:10px;color:var(--ink4);white-space:nowrap;}
+.pbar{flex:1;height:3px;background:var(--paper3);border-radius:2px;overflow:hidden;}
+.pbar-f{height:100%;background:var(--leaf);border-radius:2px;transition:width .8s ease;}
+.pscore{font-size:11px;color:var(--forest2);font-weight:500;min-width:28px;text-align:right;}
+.rdlink{display:inline-block;margin-top:9px;font-size:11px;color:var(--forest2);text-decoration:none;border-bottom:.5px solid var(--leaf);}
+.rdlink:hover{color:var(--forest);}
+.sstack{display:flex;flex-direction:column;gap:.85rem;}
+.scard{background:#fff;border:.5px solid var(--border);border-radius:4px;padding:.8rem 1rem;display:flex;gap:.7rem;align-items:flex-start;cursor:pointer;transition:border-color .15s;text-decoration:none;}
+.scard:hover{border-color:var(--leaf);}
+.sicon{width:38px;height:38px;border-radius:3px;background:var(--paper2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.stja{font-family:'Noto Serif JP',serif;font-size:12px;font-weight:400;line-height:1.6;color:var(--ink);margin-bottom:2px;}
+.sten{font-family:'Source Serif 4',serif;font-style:italic;font-size:10px;color:var(--ink4);line-height:1.4;}
+.cgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;}
+@media(max-width:680px){.cgrid{grid-template-columns:1fr 1fr;}}
+.gcard{background:#fff;border:.5px solid var(--border);border-radius:4px;padding:.95rem;cursor:pointer;transition:border-color .15s;text-decoration:none;display:block;}
+.gcard:hover{border-color:var(--leaf);}
+.gicon{font-size:22px;margin-bottom:7px;}
+.gtja{font-family:'Noto Serif JP',serif;font-size:12px;font-weight:400;line-height:1.65;color:var(--ink);margin-bottom:3px;}
+.gten{font-family:'Source Serif 4',serif;font-style:italic;font-size:10px;color:var(--ink4);line-height:1.4;margin-bottom:7px;}
+.srule{display:flex;align-items:center;gap:.7rem;margin:.25rem 0 1.2rem;}
+.rl{flex:1;height:.5px;background:var(--border);}
+.rd{width:6px;height:6px;background:var(--gold);transform:rotate(45deg);flex-shrink:0;}
+.rlabel{font-family:'Playfair Display',serif;font-style:italic;font-size:13px;color:var(--gold);letter-spacing:.05em;}
+.sbox{background:var(--paper2);border:.5px solid var(--border);border-radius:4px;padding:1.5rem;text-align:center;color:var(--ink3);font-size:13px;line-height:1.85;}
+.spinw{display:flex;flex-direction:column;align-items:center;gap:1rem;padding:3rem;}
+.spin{width:28px;height:28px;border-radius:50%;border:2px solid var(--paper3);border-top-color:var(--leaf);animation:sp .9s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.lmsg{font-size:12px;color:var(--ink3);letter-spacing:.05em;text-align:center;line-height:1.85;}
+.slog{margin-top:.7rem;font-size:11px;color:var(--ink4);text-align:left;max-width:360px;line-height:2.2;}
+.step{opacity:.35;transition:opacity .3s;} .step.done{opacity:1;color:var(--forest2);} .step.act{opacity:1;color:var(--gold);}
+.folio{background:var(--forest);padding:.9rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px;}
+.fl{color:var(--leaf2);font-size:10px;letter-spacing:.06em;opacity:.7;}
+.fr{color:var(--gold2);font-size:10px;letter-spacing:.06em;opacity:.7;}
+</style>
+</head>
+<body>
+
+<div class="mast">
+  <div class="mast-top">
+    <span class="dateline" id="dl"></span>
+    <div class="ltog">
+      <button class="lbtn on" onclick="setLang('both',this)">JA / EN</button>
+      <button class="lbtn" onclick="setLang('ja',this)">日本語</button>
+      <button class="lbtn" onclick="setLang('en',this)">English</button>
+    </div>
+  </div>
+  <div class="mast-center">
+    <span class="logo-ja">ひかりニュース</span>
+    <span class="logo-en">Hikari News</span>
+    <div class="tagline">信頼できる発行元による、前向きなニュースだけ &nbsp;·&nbsp; Positive stories from trusted sources</div>
+  </div>
+  <nav class="mast-nav">
+    <span class="ni on" onclick="fcat('all',this)">すべて / All</span>
+    <span class="ni" onclick="fcat('environment',this)">環境 / Env</span>
+    <span class="ni" onclick="fcat('science',this)">科学 / Science</span>
+    <span class="ni" onclick="fcat('society',this)">社会 / Society</span>
+    <span class="ni" onclick="fcat('innovation',this)">技術 / Tech</span>
+    <span class="ni" onclick="fcat('health',this)">医療 / Health</span>
+  </nav>
+</div>
+
+<div class="ticker">
+  <span class="tlabel">✦ LIVE</span>
+  <div class="tscroll"><span class="tinner" id="tk">読み込み中... / Loading live headlines...</span></div>
+</div>
+
+<div class="ctrl">
+  <div class="chips">
+    <span class="chip on" onclick="setMin(70,this)">ポジティブ度 70%+</span>
+    <span class="chip" onclick="setMin(80,this)">80%+</span>
+    <span class="chip" onclick="setMin(90,this)">90%+</span>
+  </div>
+  <button class="fbtn" id="fb" onclick="fetchNews()">✦ ライブ記事を取得 / Fetch Live News</button>
+</div>
+
+<div class="feed" id="feed">
+  <div class="sbox">
+    ボタンを押すと、8つの信頼できるメディアから最新記事を取得し、Claude AI がポジティブ度をリアルタイム判定します。<br><br>
+    <em style="font-size:11px;color:var(--ink4);">Press the button to fetch real articles from 8 trusted sources, scored by Claude AI.</em>
+  </div>
+</div>
+
+<div class="folio">
+  <span class="fl" id="fll">ひかりニュース — Hikari News</span>
+  <span class="fr">Reuters · BBC · Guardian · Positive News · Good News Net · NHK · Claude AI</span>
+</div>
+
+<script>
+let lang='both', cat='all', minS=70, arts=[];
+const now = new Date();
+
+document.getElementById('dl').textContent =
+  now.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'}) + '  ·  ' +
+  now.toLocaleDateString('en-GB',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+
+function setLang(l,b){lang=l;document.querySelectorAll('.lbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render();}
+function fcat(c,e){cat=c;document.querySelectorAll('.ni').forEach(x=>x.classList.remove('on'));e.classList.add('on');render();}
+function setMin(s,e){minS=s;document.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));e.classList.add('on');render();}
+
+function ago(ds){
+  try{
+    const d=new Date(ds),m=Math.floor((now-d)/60000);
+    if(m<60)return m+'分前 / '+m+'m ago';
+    if(m<1440)return Math.floor(m/60)+'時間前 / '+Math.floor(m/60)+'h ago';
+    return Math.floor(m/1440)+'日前 / '+Math.floor(m/1440)+'d ago';
+  }catch{return '';}
+}
+
+function showLoad(){
+  document.getElementById('feed').innerHTML=`
+    <div class="spinw">
+      <div class="spin"></div>
+      <div class="lmsg">Claude AI がライブRSSを解析中...<br>
+        <em style="font-size:10px;color:var(--ink4);">Fetching & scoring articles...</em>
+        <div class="slog">
+          <div class="step act" id="s1">① RSSフィードを取得中...</div>
+          <div class="step" id="s2">② Claude AI でポジティブ度を判定中...</div>
+          <div class="step" id="s3">③ 記事を表示中...</div>
+        </div>
+      </div>
+    </div>`;
+}
+function step(n){
+  for(let i=1;i<=3;i++){
+    const e=document.getElementById('s'+i);if(!e)return;
+    e.classList.remove('done','act');
+    if(i<n)e.classList.add('done');
+    else if(i===n)e.classList.add('act');
+  }
+}
+
+async function fetchNews(){
+  const btn=document.getElementById('fb');
+  btn.disabled=true;btn.textContent='…取得中 / Fetching';
+  showLoad();
+  step(1);
+
+  try{
+    step(2);
+    // Vercelのサーバーレス関数を叩く（APIキーはサーバー側に隠れている）
+    const res = await fetch('/api/fetch-news');
+    const data = await res.json();
+
+    if(data.error) throw new Error(data.error);
+
+    step(3);
+    arts = data.articles.map(a=>({...a, timeAgo:ago(a.pub)}));
+
+    // ティッカー更新
+    const tk=arts.slice(0,7).map(a=>`${a.emoji} ${a.titleJa}  ·  ${a.titleEn}`).join('　　　');
+    const te=document.getElementById('tk');
+    if(te)te.textContent=tk+'　　　'+tk;
+
+    const u=new Date();
+    document.getElementById('fll').textContent=
+      `ひかりニュース — 更新 ${u.getHours()}:${String(u.getMinutes()).padStart(2,'0')} JST  ·  ${arts.length}件選別`;
+
+    render();
+  }catch(e){
+    document.getElementById('feed').innerHTML=`<div class="sbox">
+      エラーが発生しました: ${e.message}<br>
+      <em style="font-size:11px;">Error: ${e.message}</em>
+    </div>`;
+  }
+
+  btn.disabled=false;btn.textContent='↻ 再取得 / Refresh';
+}
+
+function render(){
+  const fd=document.getElementById('feed');
+  if(!arts.length)return;
+  const fil=arts.filter(a=>(cat==='all'||a.category===cat)&&a.positivityScore>=minS);
+  if(!fil.length){
+    fd.innerHTML=`<div class="sbox">条件に合う記事がありません。フィルターを緩めてみてください。</div>`;
+    return;
+  }
+  const sja=lang!=='en',sen=lang!=='ja';
+  const h=fil[0],subs=fil.slice(1,4),gr=fil.slice(4,10);
+  fd.innerHTML=`
+    <div class="fhead">
+      <span class="ftitle">${sja?'トップニュース':''}${lang==='both'?' / ':''}${sen?'Top Stories':''}</span>
+      <span class="fcount">${fil.length}件</span>
+      <span class="aibadge">Claude AI 選別済み</span>
+    </div>
+    <div class="hgrid">
+      <div class="hcard">
+        <div class="hvis"><span style="font-size:58px;">${h.emoji}</span>
+          <span class="hsrc">${h.source}</span>
+          <span class="hpill">✦ ${h.positivityScore}%</span>
+        </div>
+        <div class="hbody">
+          <div class="cmeta"><span class="sc">${h.source}</span><span class="sc">${h.category}</span><span class="tc">${h.timeAgo}</span></div>
+          ${sja?`<div class="htja">${h.titleJa}</div>`:''}
+          ${sen?`<div class="hten">${h.titleEn}</div>`:''}
+          ${sja&&h.summaryJa?`<div class="hsum">${h.summaryJa}</div>`:''}
+          ${lang==='en'?`<div class="hsum">${h.summaryEn}</div>`:''}
+          <div class="pbar-w">
+            <span class="pbar-l">${sja?'ポジティブ度':'Positivity'}</span>
+            <div class="pbar"><div class="pbar-f" style="width:${h.positivityScore}%"></div></div>
+            <span class="pscore">${h.positivityScore}%</span>
+          </div>
+          <a class="rdlink" href="${h.link}" target="_blank" rel="noopener">${sja?'元記事を読む':'Read original'} →</a>
+        </div>
+      </div>
+      <div class="sstack">
+        ${subs.map(a=>`
+          <a class="scard" href="${a.link}" target="_blank" rel="noopener">
+            <div class="sicon">${a.emoji}</div>
+            <div style="flex:1;min-width:0;">
+              <div class="cmeta" style="margin-bottom:4px;"><span class="sc">${a.source}</span><span class="scs">${a.positivityScore}%</span><span class="tc">${a.timeAgo}</span></div>
+              ${sja?`<div class="stja">${a.titleJa}</div>`:''}
+              ${sen?`<div class="sten">${a.titleEn}</div>`:''}
+            </div>
+          </a>`).join('')}
+      </div>
+    </div>
+    ${gr.length?`
+    <div class="srule"><div class="rl"></div><div class="rd"></div>
+      <span class="rlabel">${sja?'注目のストーリー':''}${lang==='both'?' · ':''}${sen?'More Stories':''}</span>
+      <div class="rd"></div><div class="rl"></div>
+    </div>
+    <div class="cgrid">
+      ${gr.map(a=>`
+        <a class="gcard" href="${a.link}" target="_blank" rel="noopener">
+          <div class="gicon">${a.emoji}</div>
+          <div class="cmeta" style="margin-bottom:5px;"><span class="sc">${a.source}</span><span class="scs">${a.positivityScore}%</span></div>
+          ${sja?`<div class="gtja">${a.titleJa}</div>`:''}
+          ${sen?`<div class="gten">${a.titleEn}</div>`:''}
+          <div class="pbar" style="margin-top:7px;"><div class="pbar-f" style="width:${a.positivityScore}%"></div></div>
+        </a>`).join('')}
+    </div>`:''}`;
+}
+</script>
+</body>
+</html>
